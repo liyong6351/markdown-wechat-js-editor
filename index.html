@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+
+<head>
+    <link onerror="wx_loaderror(this)" rel="stylesheet" href="css/appmsg.css" media="all">
+    <link rel="stylesheet" type="text/css" href="css/ueditor.css">
+    <script src="js/markdown.js"></script>
+    <script src="js/helper.js"></script>
+    <script src="js/tables.js"></script>
+    <script src="js/style.js"></script>
+</head>
+
+<body>
+    <br>
+    <div id="operateArea">
+        <div>
+            <div>
+                <div style="float: left;margin-right: 12px">
+                    <label>风格</label>
+                    <select id="styleNode" name="styleNode">
+                        <option value="blue">蓝色</option>
+                        <option value="pink">粉色</option>
+                    </select>
+                </div>
+                <div>
+                    <button id="submitButton" onclick="option()">Create</button>
+                </div>
+            </div>
+            <div>
+                <textarea id="text-input" rows="200" cols="200">###### 快讯||快讯摘要&#13;&#10;##二级标题&#13;&#10;黄昏，王站在高高的城墙上，看着这落日的余光,[百度](https://www.baidu.com)     &#10;##### 五级标题用于扩展加边框的情况&#10;###标题三&#13;&#10;三级标题对应的文字&#13;&#10;####四级标题&#13;&#10;四级标题对应的文字</textarea>
+            </div>
+        </div>
+    </div>
+    <div class="wx_phone_preview_wrp jsPhoneView" onclick="show()">
+        <div class="wx_phone_preview">
+            <div class="wx_phone jsPhoneViewMain">
+
+                <div class="wx_phone_preview_appmsg appmsg_wap">
+                    <div class="rich_media">
+                        <div class="rich_media_area_primary">
+                            <div class="rich_media_content" id="createPreview">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function show() {
+            $("createPreview").style.display = "none";
+            $("operateArea").style.display = "inline-block";
+        }
+
+        function option() {
+            var styleType = $('styleNode').options[$('styleNode').selectedIndex].value;
+            var html = markdown.renderJsonML(markdown.toHTMLTree(markdown.parse($("text-input").value)));
+            html = dealTable(html);
+            var doc = document.createElement('div');
+            doc.innerHTML = html;
+            var node = document.createElement("html");
+            if (doc.hasChildNodes()) {
+                for (var i = 0; i < doc.childNodes.length; i++) {
+                    var t = create(doc.childNodes[i], styleType);
+                    node.appendChild(t);
+                }
+            }
+            var authorNode = createAuthorNode();
+            node.insertBefore(authorNode, node.childNodes[0]);
+            var head = createTopFocusElement(styleType);
+            node.insertBefore(head, node.childNodes[0]);
+
+            node.appendChild(document.createElement('hr'));
+            var tailpNode = createTailNode();
+            node.appendChild(tailpNode);
+            $("createPreview").innerHTML = node.innerHTML;
+            $("createPreview").style.display = "inline-block";
+            $("operateArea").style.display = "none";
+        }
+    </script>
+</body>
+
+</html>
